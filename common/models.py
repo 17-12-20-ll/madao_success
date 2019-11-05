@@ -8,6 +8,7 @@ from tweet.models import Tweet
 class Column(models.Model):
     name = models.CharField(max_length=32, unique=True, null=False)
     desc = models.CharField(max_length=255, null=True, verbose_name='栏目描述')
+    code = models.CharField(max_length=32, unique=True, verbose_name='栏目编码')
     column = models.ForeignKey('self', on_delete=models.CASCADE, null=True, default=None, related_name='columns',
                                verbose_name='栏目父节点')
     update_time = models.DateTimeField(auto_now=True)
@@ -15,6 +16,16 @@ class Column(models.Model):
     
     class Meta:
         db_table = 'column'
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'desc': self.desc,
+            'code': self.code,
+            # 'parent': self.column_id if self.column_id else 0,
+            'child': [i.to_dict() for i in self.columns.all()] if self.columns.all() else None
+        }
 
 
 # 栏目与文章多对多
