@@ -1,4 +1,4 @@
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 
 
@@ -20,6 +20,9 @@ class User(models.Model):
     
     def set_password(self, pwd):
         self.password = make_password(pwd)
+    
+    def verify_password(self, pwd):
+        return check_password(pwd, self.password)
     
     def to_dict(self):
         return {
